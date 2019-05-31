@@ -16,6 +16,55 @@
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 
+void get_mime_type(char* filename, char *mime_type){
+    char *extension = NULL;
+    char mime_types[6][2][11] = {
+        {"gif" ,"image/gif"},
+        {"jpg" ,"image/jpeg"},
+        {"jpeg" ,"image/jpeg"},
+        {"png" ,"image/png"},
+        {"htm" ,"text/html"},
+        {"html" ,"text/html"}
+    };
+    extension = strrchr(filename,'.');
+    *extension++;
+    for (size_t i = 0; i < 6; i++){
+        if(strcmp(extension, mime_types[i][0]) == 0){
+            strcpy(mime_type, mime_types[i][1]);
+        }
+    } 
+}
+
+void get_formatted_time(char *string_date){
+    time_t t = time(NULL);
+    char days[7][4] = {
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+    };
+    char months[12][4] = {
+        "Jan", 
+        "Feb", 
+        "Mar", 
+        "Apr", 
+        "May", 
+        "Jun", 
+        "Jul", 
+        "Aug", 
+        "Sep", 
+        "Oct", 
+        "Nov", 
+        "Dec"
+    };
+    struct tm tm = *localtime(&t);
+
+    sprintf(string_date, "Date: %s, %d %s %d %d:%d:%d GMT\r\n", days[tm.tm_wday], tm.tm_mday, months[tm.tm_mon], tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
+}
+
 int handle_request(int client_socket){
     // Initialisation
     char request[BUFFER_SIZE] = { '\0' }, character = { '\0' }, request_path[BUFFER_SIZE + 16] = WEB_ROOT, *file_content = NULL;
