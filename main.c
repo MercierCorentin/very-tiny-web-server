@@ -37,7 +37,28 @@ int main(){
 
             addrlen = sizeof(client_addr);
             client_socket = accept(server_socket, (struct sockaddr*) &client_addr, &addrlen );
-            handle_request(client_socket);
+            if(client_socket > 0){
+                // Double fork to avoid zombie processes 
+                // First fork
+                pid = fork();
+                if(pid == 0){
+                    // Process B; Child of A
+                    // Second fork 
+                    pid = fork();
+                    if(pid == 0){
+                        // Process C; Child of C
+                        handle_request(client_socket);
+                        // Exit C
+                        return 0;
+                    }else{
+                        // Exit B process (kill C process when C ends)
+                        return 0;
+                    }
+                }else{
+                    // Wait for B to end and kill it 
+                    waitpid(pid, &status, 0);
+                }
+            }
         }
     }
     else{
