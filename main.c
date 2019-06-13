@@ -24,7 +24,7 @@ int main(){
     server_socket = socket(AF_INET, SOCK_STREAM, 0); // create socket
 
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // configure server IP and port
+    server_addr.sin_addr.s_addr = INADDR_ANY; 
     server_addr.sin_port = htons(80);
 
     result = bind(server_socket, (struct sockaddr*) &server_addr, sizeof( server_addr ));
